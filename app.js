@@ -19,7 +19,7 @@ receiptButton.addEventListener('click', async () => {
       headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
         _subject: 'Para Nao: alguien confirmó que leyó la carta',
-        message: 'Una persona pulsó voluntariamente «Ya vi la carta 💕» en https://cristianl28.github.io/Para_Nao/. Este aviso no verifica su identidad.'
+        message: 'Una persona pulsó voluntariamente «Ya la leí, avisarte 💕» en https://cristianl28.github.io/Para_Nao/. Este aviso no verifica su identidad.'
       }),
       signal: controller.signal,
       credentials: 'omit',
