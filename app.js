@@ -1,4 +1,44 @@
 const dialog = document.querySelector('#letter-dialog');
+const receiptButton = document.querySelector('#send-receipt');
+const receiptStatus = document.querySelector('#receipt-status');
+const receiptClose = document.querySelector('#close-without-receipt');
+let receiptSent = false;
+let receiptPending = false;
+receiptClose.addEventListener('click', () => dialog.close());
+receiptButton.addEventListener('click', async () => {
+  if (receiptSent || receiptPending) return;
+  receiptPending = true;
+  receiptButton.disabled = true;
+  receiptButton.textContent = 'Enviando…';
+  receiptStatus.textContent = 'Enviando tu aviso a Cristian…';
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch('https://formspree.io/f/mwlvrykn', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Para Nao: alguien confirmó que leyó la carta',
+        message: 'Una persona pulsó voluntariamente «Ya vi la carta 💕» en https://cristianl28.github.io/Para_Nao/. Este aviso no verifica su identidad.'
+      }),
+      signal: controller.signal,
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer'
+    });
+    if (!response.ok) throw new Error('Submission failed');
+    receiptSent = true;
+    receiptButton.textContent = 'Aviso enviado ♡';
+    receiptStatus.textContent = 'Listo, tu aviso se envió. Gracias por leerla ♡';
+    receiptClose.textContent = 'Cerrar carta';
+  } catch {
+    receiptButton.disabled = false;
+    receiptButton.textContent = 'Reintentar aviso';
+    receiptStatus.textContent = 'No pudimos confirmar el envío. Podés reintentar o cerrar la carta.';
+  } finally {
+    clearTimeout(timeout);
+    receiptPending = false;
+  }
+});
 const opener = document.querySelector('#open-letter');
 const palettes = {
   cream: ['#f2e7d7','#d5b9a2','#c5a78f','#fff7e9','claras'],
